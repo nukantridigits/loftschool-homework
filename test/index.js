@@ -109,7 +109,7 @@ describe('ДЗ 4 - Работа с DOM', () => {
         });
     });
 
-    /* describe('collectDOMStat', () => {
+    describe('collectDOMStat', () => {
         it('должна вернуть статистику по переданному дереву', () => {
             let where = document.createElement('div');
             let class1 = `class-${random('number')}`;
@@ -239,5 +239,5 @@ describe('ДЗ 4 - Работа с DOM', () => {
 
             document.body.removeChild(where);
         });
-    }); */
+    });
 });
