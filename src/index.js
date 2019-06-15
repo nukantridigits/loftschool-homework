@@ -33,16 +33,16 @@ function loadAndSortTowns() {
 
         xhr.responseType = 'json';
         xhr.open('GET', url);
-        xhr.onload = function () {
+        xhr.onload = () => {
             if (xhr.status === 200) {
                 resolve(xhr.response.sort((a, b) => a.name.localeCompare(b.name)));
             } else {
-                reject(xhr.status);
+                reject(xhr.error);
             }
         };
-
+        xhr.onerror = error => reject(error);
         xhr.send();
-    })
+    });
 
 }
 
