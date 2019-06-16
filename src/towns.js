@@ -1,3 +1,4 @@
+import { loadAndSortTowns } from './index';
 /*
  Страница должна предварительно загрузить список городов из
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -37,23 +38,7 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    const url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-
-    return new Promise((resolve, reject) => {
-        let xhr = new XMLHttpRequest();
-
-        xhr.responseType = 'json';
-        xhr.open('GET', url);
-        xhr.onload = () => {
-            if (xhr.status === 200) {
-                resolve(xhr.response.sort((a, b) => a.name.localeCompare(b.name)));
-            } else {
-                reject(xhr.error);
-            }
-        };
-        xhr.onerror = error => reject(error);
-        xhr.send();
-    });
+    return loadAndSortTowns();
 }
 
 /*
