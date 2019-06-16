@@ -43,13 +43,50 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+filterNameInput.addEventListener('keyup', function() {
+    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    renderCookies();
+});
+
+addButton.addEventListener('click', () => {
+    // здесь можно обработать нажатие на кнопку "добавить cookie"
+    let cookieName = addNameInput.value;
+    let cookieValue = addValueInput.value;
+
+    if (cookieName.length && cookieValue.length) {
+        for (let input of [... document.querySelectorAll('#add-block input')]) {
+            input.value = '';
+        }
+
+        return setCookie(cookieName, cookieValue);
+    }
+
+    return false;
+});
+
+document.addEventListener('click', event => {
+    let target = event.target;
+
+    if (target.classList.contains('cookie-delete-btn')) {
+        let cookieName = target.parentNode.previousSibling.previousSibling.textContent;
+        let tr = target.closest('tr');
+
+        return deleteCookie(cookieName, tr);
+    }
+});
+
 const parseCookies = () => {
-    console.log('loadCookies');
     let cookies = document.cookie;
+
     if (cookies.length) {
+        let filter = filterNameInput.value;
+
         return cookies.split('; ').reduce((prev, current) => {
             const [name, value] = current.split('=');
 
+            if (filter.length && !isMatching(name, filter) && !isMatching(value, filter)) {
+                return prev;
+            }
             prev[name] = value;
 
             return prev;
@@ -59,8 +96,7 @@ const parseCookies = () => {
     return {};
 };
 
-const getCookies = () => {
-    console.log('getCookies');
+const renderCookies = () => {
     clearList(listTable);
     let cookies = parseCookies();
 
@@ -76,7 +112,6 @@ const getCookies = () => {
 };
 
 const createTr = (cookie, cookieValue) => {
-    console.log('createTr');
     const deleteText = 'Удалить cookie';
     let tr = document.createElement('tr');
     let name = document.createElement('td');
@@ -98,64 +133,31 @@ const createTr = (cookie, cookieValue) => {
     return true;
 };
 
-document.addEventListener('click', event => {
-    let target = event.target;
-
-    if (target.classList.contains('cookie-delete-btn')) {
-        let cookieName = target.parentNode.previousSibling.previousSibling.textContent;
-        let tr = target.closest('tr');
-
-        console.log('cookie for delete', cookieName);
-
-        return deleteCookie(cookieName, tr);
-    }
-});
-
-const setCookie = (name, value, days) => {
-    console.log('setCookie');
+const setCookie = (name, value, days = 14) => {
     let date = new Date();
 
     date.setDate(date.getDate() + days);
     document.cookie = name + '=' + value + ';path=/; expires=' + date.toUTCString();
-    console.log('кука '+ name + 'установлена');
-    let cookies = parseCookies();
-    console.log('печатаем новые куки браузера', cookies);
-    return getCookies();
-};
 
-const clearList = element => {
-    console.log('clearList');
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
+    return renderCookies();
 };
 
 const deleteCookie = (name, tr) => {
-    console.log('deleteCookie');
-    listTable.removeChild(tr);
     setCookie(name, '', -1);
+    listTable.removeChild(tr);
+
+    return true;
 };
 
-getCookies();
-
-filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-});
-
-addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
-    let cookieName = addNameInput.value;
-    let cookieValue = addValueInput.value;
-
-    if (cookieName.length && cookieValue.length) {
-        for (let input of [... document.querySelectorAll('#add-block input')]) {
-            input.value = '';
-        }
-
-        // return setCookie(cookieName, cookieValue, 14);
-        return setCookie(cookieName, cookieValue, 14);
+const clearList = element => {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
     }
 
-    return false;
-});
+    return true;
+};
+
+const isMatching = (full, chunk) => !!(~full.indexOf(chunk));
+
+renderCookies();
 
