@@ -43,7 +43,7 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-const loadCookies = () => {
+const parseCookies = () => {
     console.log('loadCookies');
     let cookies = document.cookie;
     if (cookies.length) {
@@ -62,7 +62,7 @@ const loadCookies = () => {
 const getCookies = () => {
     console.log('getCookies');
     clearList(listTable);
-    let cookies = loadCookies();
+    let cookies = parseCookies();
 
     if (Object.keys(cookies).length !== 0) {
         for (let cookie in cookies) {
@@ -117,7 +117,9 @@ const setCookie = (name, value, days) => {
 
     date.setDate(date.getDate() + days);
     document.cookie = name + '=' + value + ';path=/; expires=' + date.toUTCString();
-
+    console.log('кука '+ name + 'установлена');
+    let cookies = parseCookies();
+    console.log('печатаем новые куки браузера', cookies);
     return getCookies();
 };
 
@@ -142,14 +144,18 @@ filterNameInput.addEventListener('keyup', function() {
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
-    let cookieName = addNameInput.value.trim();
-    let cookieValue = addValueInput.value.trim();
+    let cookieName = addNameInput.value;
+    let cookieValue = addValueInput.value;
 
     if (cookieName.length && cookieValue.length) {
-        setCookie(cookieName, cookieValue, 14);
         for (let input of [... document.querySelectorAll('#add-block input')]) {
             input.value = '';
         }
+
+        // return setCookie(cookieName, cookieValue, 14);
+        return setCookie(cookieName, cookieValue, 14);
     }
+
+    return false;
 });
 
