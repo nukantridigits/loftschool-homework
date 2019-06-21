@@ -54,10 +54,6 @@ addButton.addEventListener('click', () => {
     let cookieValue = addValueInput.value;
 
     if (cookieName.length && cookieValue.length) {
-        for (let input of [... document.querySelectorAll('#add-block input')]) {
-            input.value = '';
-        }
-
         return setCookie(cookieName, cookieValue);
     }
 
@@ -69,11 +65,12 @@ document.addEventListener('click', event => {
 
     if (target.classList.contains('cookie-delete-btn')) {
         let cookieName = target.parentNode.previousSibling.previousSibling.textContent;
-        let tr = target.closest('tr');
 
-        return deleteCookie(cookieName, tr);
+        return deleteCookie(cookieName);
     }
 });
+
+const isMatching = (full, chunk) => !!(~full.indexOf(chunk));
 
 const parseCookies = () => {
     let cookies = document.cookie;
@@ -119,6 +116,7 @@ const createTr = (cookie, cookieValue) => {
     let deleteCell = document.createElement('td');
     let cookieDeleteBtn = document.createElement('button');
 
+    tr.id = cookie;
     name.textContent = cookie;
     value.textContent = cookieValue;
     cookieDeleteBtn.classList.add('cookie-delete-btn');
@@ -142,12 +140,7 @@ const setCookie = (name, value, days = 14) => {
     return renderCookies();
 };
 
-const deleteCookie = (name, tr) => {
-    setCookie(name, '', -1);
-    listTable.removeChild(tr);
-
-    return true;
-};
+const deleteCookie = name => setCookie(name, '', -1);
 
 const clearList = element => {
     while (element.firstChild) {
@@ -157,7 +150,4 @@ const clearList = element => {
     return true;
 };
 
-const isMatching = (full, chunk) => !!(~full.indexOf(chunk));
-
 renderCookies();
-
