@@ -116,7 +116,6 @@ const createTr = (cookie, cookieValue) => {
     let deleteCell = document.createElement('td');
     let cookieDeleteBtn = document.createElement('button');
 
-    tr.id = cookie;
     name.textContent = cookie;
     value.textContent = cookieValue;
     cookieDeleteBtn.classList.add('cookie-delete-btn');
